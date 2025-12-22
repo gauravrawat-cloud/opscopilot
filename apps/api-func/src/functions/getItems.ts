@@ -1,5 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { QueueClient } from "@azure/storage-queue";
+import { createItem, listItems, saveAnalysis } from "../repo/itemsRepo";
 
 type OpsItem = {
   id: string;
@@ -59,7 +60,7 @@ app.http("items", {
     }
 
     if (request.method === "GET") {
-      return json(200, { items });
+      return json(200, { items: listItems() });
     }
 
     // POST /api/items
@@ -71,18 +72,13 @@ app.http("items", {
       }
 
       const now = new Date().toISOString();
-      const item: OpsItem = {
+      const item = createItem({
         id: crypto.randomUUID(),
         title: body.title,
         description: body.description,
         system: body.system,
         env: body.env,
-        status: "pending",
-        createdAt: now,
-        updatedAt: now,
-      };
-
-      items.unshift(item);
+      });
       await enqueueAnalyzeMessage(item.id, context);
       return json(201, { item });
     } catch (err: any) {
@@ -117,16 +113,10 @@ app.http("saveAnalysis", {
       } catch {
         return json(400, { error: "invalid json body" });
       }
-  
-      const item = items.find((x) => x.id === id);
-      if (!item) return json(404, { error: "item not found" });
-  
-      item.analysis = body;
-      item.status = "analyzed";
-      item.updatedAt = new Date().toISOString();
-  
-      context.log(`✅ Analysis saved for item ${id}`);
-      return json(200, { item });
+      
+      const updated = saveAnalysis(id, body);
+      if (!updated) return json(404, { error: "item not found" });
+      return json(200, { item: updated });
     },
   });
   
