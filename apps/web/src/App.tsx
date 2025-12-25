@@ -18,8 +18,8 @@ type OpsItem = {
   updatedAt: string;
 };
 
-// const API_BASE = "http://localhost:7071/api";
 const API_BASE = "/api";
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 export default function App() {
   const [items, setItems] = useState<OpsItem[]>([]);
@@ -36,7 +36,13 @@ export default function App() {
   async function loadItems() {
     setErr(null);
     try {
-      const r = await fetch(`${API_BASE}/items`);
+      const r = await fetch(`${API_BASE}/items`, {
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": API_KEY,
+        }
+      });
       const data = await r.json();
       setItems(data.items ?? []);
     } catch (e: any) {
@@ -53,7 +59,10 @@ export default function App() {
     try {
       const r = await fetch(`${API_BASE}/items`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": API_KEY,
+        },
         body: JSON.stringify({ title, description, system, env }),
       });
       if (!r.ok) {
@@ -72,7 +81,7 @@ export default function App() {
 
   useEffect(() => {
     loadItems();
-    const t = setInterval(loadItems, 2000); // simple polling for MVP
+    const t = setInterval(loadItems, 8000);
     return () => clearInterval(t);
   }, []);
 
