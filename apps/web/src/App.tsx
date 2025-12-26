@@ -13,10 +13,22 @@ type OpsItem = {
     severity?: number;
     tags?: string[];
     nextSteps?: string[];
+    rag?: {
+      topK?: number;
+      systemOnly?: boolean;
+      similarItems?: {
+        id: string;
+        title?: string;
+      }[];
+      similarItemIds?: string[];
+      retrievedCount?: number;
+      source?: string;
+    };
   };
   createdAt: string;
   updatedAt: string;
 };
+
 
 const API_BASE = "/api";
 const API_KEY = import.meta.env.VITE_API_KEY;
@@ -165,11 +177,29 @@ export default function App() {
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {items.map((it) => (
                 <div key={it.id} style={{ border: "1px solid #eee", borderRadius: 12, padding: 12 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
                     <strong>{it.title}</strong>
-                    <span style={{ fontSize: 12, color: it.status === "analyzed" ? "green" : "#666" }}>
-                      {it.status}
-                    </span>
+
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                      {it.analysis?.rag?.similarItems?.length ? (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            padding: "2px 6px",
+                            borderRadius: 8,
+                            background: "#e6f2ff",
+                            color: "#0057b8",
+                            border: "1px solid #cfe4ff",
+                          }}
+                        >
+                          RAG used
+                        </span>
+                      ) : null}
+
+                      <span style={{ fontSize: 12, color: it.status === "analyzed" ? "green" : "#666" }}>
+                        {it.status}
+                      </span>
+                    </div>
                   </div>
 
                   <div style={{ fontSize: 12, color: "#777", marginTop: 4 }}>
@@ -189,6 +219,20 @@ export default function App() {
                       {it.analysis.tags?.length ? (
                         <div style={{ fontSize: 12, color: "#555", marginTop: 6 }}>
                           <strong>Tags:</strong> {it.analysis.tags.join(", ")}
+                        </div>
+                      ) : null}
+                      {it.analysis?.rag?.similarItems?.length ? (
+                        <div style={{ marginTop: 8 }}>
+                          <div style={{ fontSize: 12, color: "#555" }}>
+                            <strong>Similar incidents used (RAG)</strong>
+                          </div>
+                          <ul style={{ marginTop: 6 }}>
+                            {it.analysis.rag.similarItems.map((s: any) => (
+                              <li key={s.id} style={{ fontSize: 12, color: "#444" }}>
+                                {s.title || s.id}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       ) : null}
                       {it.analysis.nextSteps?.length ? (

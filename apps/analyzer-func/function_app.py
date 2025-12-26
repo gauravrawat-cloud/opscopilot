@@ -302,7 +302,10 @@ def analyze_item(msg: func.QueueMessage):
         analysis["rag"] = {
             "topK": int(os.getenv("RAG_TOP_K", "3")),
             "systemOnly": True,
-            "similarItemIds": similar_ids[:int(os.getenv("RAG_TOP_K", "3"))],
+            "similarItems": [
+                {"id": d.get("id") or d.get("itemId"), "title": d.get("title", "")}
+                for d in similar_docs
+            ],
         }
         analysis["rag"]["source"] = "cosmos-vector-search"
         analysis["rag"]["retrievedCount"] = len(similar_ids)

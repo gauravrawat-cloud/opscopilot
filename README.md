@@ -30,7 +30,7 @@ Over time, the system “learns” by reusing past incidents as context.
 ---
 
 ## High-level architecture
-
+```
 Web (React)
     |
     v
@@ -44,7 +44,7 @@ Analyzer (Python Azure Function)
     |
     |-- OpenAI (analysis + embeddings)
     |-- Cosmos DB (item_vectors)
-
+```
 Key idea:
 - **Node API** = request handling, persistence, auth
 - **Python analyzer** = AI + RAG logic
@@ -64,13 +64,14 @@ Key idea:
 ---
 
 ## Repo structure
+```
 /
 ├─ apps/
 │ ├─ web/ # React UI
 │ ├─ api-func/ # Node.js API (Azure Function)
 │ └─ analyzer-func/ # Python analyzer (Azure Function)
 └─ README.md
-
+```
 Each app has its own README with setup and runtime details.
 
 ---
