@@ -5,10 +5,10 @@ function getContainer(): Container {
   const endpoint = process.env["COSMOS_ENDPOINT"];
   const key = process.env["COSMOS_KEY"];
   const dbName = process.env["COSMOS_DB_NAME"];
-  const containerName = process.env["COSMOS_CONTAINER_NAME"];
+  const containerName = process.env["COSMOS_ITEMS_NAME"];
 
   if (!endpoint || !key || !dbName || !containerName) {
-    throw new Error("Cosmos env vars missing (COSMOS_ENDPOINT, COSMOS_KEY, COSMOS_DB_NAME, COSMOS_CONTAINER_NAME)");
+    throw new Error("Cosmos env vars missing (COSMOS_ENDPOINT, COSMOS_KEY, COSMOS_DB_NAME, COSMOS_ITEMS_NAME)");
   }
 
   const client = new CosmosClient({ endpoint, key });
