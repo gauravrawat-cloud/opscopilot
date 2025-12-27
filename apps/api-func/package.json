@@ -9,7 +9,8 @@
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
     "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@azure/cosmos": "^4.9.0",
@@ -17,9 +18,10 @@
     "@azure/storage-queue": "^12.28.1"
   },
   "devDependencies": {
-    "@types/node": "18.x",
+    "@types/node": "^20.19.27",
     "azure-functions-core-tools": "^4.x",
     "rimraf": "^5.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
   }
 }

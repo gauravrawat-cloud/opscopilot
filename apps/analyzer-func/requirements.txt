@@ -6,3 +6,4 @@ azure-functions
 requests
 openai
 azure-cosmos
+pytest

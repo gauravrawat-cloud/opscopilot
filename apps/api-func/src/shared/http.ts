@@ -85,3 +85,8 @@ export function rateLimit(
     body: JSON.stringify({ error: "Too Many Requests", limit, windowMs, retryAfterSec }),
   };
 }
+
+// test-only helper (clears in-memory limiter)
+export function __resetRateLimitForTests() {
+  rateMap.clear();
+}

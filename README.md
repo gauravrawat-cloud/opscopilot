@@ -105,3 +105,6 @@ Each app README explains its own setup and environment variables.
 - UI improvements
 - Hybrid search (keyword + vector)
 - Evaluation / scoring of AI output
+
+```md
+See [TESTING.md](./TESTING.md) for how to run unit tests.

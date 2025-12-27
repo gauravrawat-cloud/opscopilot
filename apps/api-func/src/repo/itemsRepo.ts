@@ -42,3 +42,8 @@ export function saveAnalysis(id: string, analysis: any): OpsItem | null {
   item.updatedAt = new Date().toISOString();
   return item;
 }
+
+// test-only helper
+export function __resetItemsForTests() {
+  items.length = 0;
+}
