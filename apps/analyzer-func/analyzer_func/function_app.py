@@ -118,6 +118,43 @@ def fetch_items_by_ids(system: str, item_ids: list[str]) -> list[dict]:
             continue
     return results
 
+def get_item_status(item_id: str) -> str | None:
+    items, _ = get_cosmos_containers()
+    try:
+        doc = items.read_item(item=item_id, partition_key=item_id)
+        return doc.get("status")
+    except Exception:
+        return None
+    
+def post_status(item_id: str, status: str, stage: str | None = None, message: str | None = None):
+    api_base = os.getenv("API_BASE_URL", "").rstrip("/")
+    if not api_base:
+        logging.error("API_BASE_URL not set")
+        return
+
+    headers = {}
+    api_key = os.getenv("APP_API_KEY")
+    if api_key:
+        headers["x-api-key"] = api_key
+
+    payload = {"status": status}
+    if stage or message:
+        payload["error"] = {
+            "stage": stage,
+            "message": message,
+            "at": datetime.utcnow().isoformat() + "Z",
+        }
+
+    try:
+        requests.post(
+            f"{api_base}/api/items/{item_id}/status",
+            json=payload,
+            headers=headers,
+            timeout=10
+        )
+    except Exception as e:
+        logging.error("Failed to post status update for %s: %s", item_id, e)
+
 # -----------------------
 # function
 # -----------------------
@@ -140,6 +177,12 @@ def analyze_item(msg: func.QueueMessage):
     if not item_id:
         logging.error("Missing item id")
         return
+    
+    # Idempotency, skip if already analyzed
+    status = get_item_status(item_id)
+    if status == "analyzed":
+        logging.info("Skip analyze for %s (already analyzed)", item_id)
+        return
 
     # env-configurable guardrails
     model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
@@ -161,6 +204,8 @@ def analyze_item(msg: func.QueueMessage):
         logging.info("Vector upserted for item %s (dims=%d pk=%s)", item_id, len(emb), (system or "global"))
     except Exception as e:
         logging.error("Vector upsert failed for %s: %s", item_id, e)
+        post_status(item_id, "failed", "embedding", str(e))
+        return
     
     # 2) retrieve top-K similar vectors (same system only)
     top_k = int(os.getenv("RAG_TOP_K", "3"))
@@ -178,8 +223,9 @@ def analyze_item(msg: func.QueueMessage):
         )
     except Exception as e:
         logging.error("Vector retrieval failed for %s: %s", item_id, e)
-        similar = []
-
+        post_status(item_id, "failed", "rag", str(e))
+        return
+    
     similar_ids = [s.get("itemId") for s in similar if s.get("itemId")]
     similar_docs = fetch_items_by_ids(system, similar_ids)
     rag_context = build_rag_context(similar_docs)
@@ -264,6 +310,7 @@ def analyze_item(msg: func.QueueMessage):
 
     except Exception as e:
         logging.error("OpenAI analysis failed for %s: %s", item_id, e)
+        post_status(item_id, "failed", "openai", str(e))
         return
 
     # post analysis back to API
@@ -287,3 +334,5 @@ def analyze_item(msg: func.QueueMessage):
         logging.info("Posted analysis for %s status=%s", item_id, r.status_code)
     except Exception as e:
         logging.error("Failed to post analysis to API: %s", e)
+        post_status(item_id, "failed", "postback", str(e))
+        return

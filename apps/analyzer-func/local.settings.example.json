@@ -1,0 +1,28 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+      "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+      "FUNCTIONS_WORKER_RUNTIME": "python",
+  
+      "API_BASE_URL": "http://localhost:7071",
+      "APP_API_KEY": "sample-api-key",
+  
+      "OPENAI_API_KEY": "sk-xxxxx",
+      "OPENAI_MODEL": "gpt-4.1-mini",
+      "OPENAI_EMBED_MODEL": "text-embedding-3-small",
+  
+      "OPENAI_MAX_INPUT_CHARS": "6000",
+      "OPENAI_MAX_OUTPUT_TOKENS": "400",
+      "OPENAI_TIMEOUT_SECONDS": "15",
+      "OPENAI_TEMPERATURE": "0.2",
+  
+      "RAG_TOP_K": "3",
+  
+      "COSMOS_ENDPOINT": "https://<cosmos-account>.documents.azure.com:443/",
+      "COSMOS_KEY": "<cosmos-primary-key>",
+      "COSMOS_DB_NAME": "opscopilot",
+      "COSMOS_ITEMS_CONTAINER": "items",
+      "COSMOS_VECTORS_CONTAINER": "item_vectors"
+    }
+  }
+  

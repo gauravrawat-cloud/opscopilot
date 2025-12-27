@@ -50,3 +50,33 @@ export async function saveAnalysisCosmos(id: string, analysis: any): Promise<Ops
     return null;
   }
 }
+
+export async function saveStatusCosmos(
+  id: string,
+  body: { status: "pending" | "analyzed" | "failed"; error?: any }
+): Promise<OpsItem | null> {
+  const container = getContainer();
+
+  try {
+    const { resource } = await container.item(id, id).read<OpsItem>();
+    if (!resource) return null;
+
+    const now = new Date().toISOString();
+
+    resource.status = body.status;
+    resource.updatedAt = now;
+
+    if (body.error !== undefined) {
+      (resource as any).error = body.error;
+    } else if (body.status !== "failed") {
+      // clear previous error when status changes away from failed
+      delete (resource as any).error;
+    }
+
+    const { resource: replaced } = await container.item(id, id).replace(resource);
+    return (replaced ?? null) as OpsItem | null;
+  } catch (e: any) {
+    if (e?.code === 404) return null;
+    throw e;
+  }
+}

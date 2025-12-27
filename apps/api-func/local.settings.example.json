@@ -1,0 +1,19 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+      "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+      "FUNCTIONS_WORKER_RUNTIME": "node",
+  
+      "APP_API_KEY": "sample-api-key",
+  
+      "USE_COSMOS": "false",
+  
+      "COSMOS_ENDPOINT": "https://<cosmos-account>.documents.azure.com:443/",
+      "COSMOS_KEY": "<cosmos-primary-key>",
+      "COSMOS_DB_NAME": "opscopilot",
+      "COSMOS_ITEMS_CONTAINER": "items",
+  
+      "OPS_QUEUE_NAME": "ops-items"
+    }
+  }
+  

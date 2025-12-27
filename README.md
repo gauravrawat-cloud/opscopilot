@@ -97,6 +97,17 @@ Each app README explains its own setup and environment variables.
 
 ---
 
+## Configuration
+
+This repo uses environment-based configuration.
+
+- Example configuration files are provided:
+  - `apps/api-func/local.settings.example.json`
+  - `apps/analyzer-func/local.settings.example.json`
+  - `apps/web/.env.example`
+
+---
+
 ## Future improvements (out of scope for now)
 
 - CI/CD pipelines
