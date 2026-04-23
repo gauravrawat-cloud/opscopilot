@@ -15,6 +15,20 @@ be understood and run locally.
 
 ---
 
+## Demo
+
+▶️ Watch the full walkthrough:  
+https://www.loom.com/share/b83c5a12b86c4f3d8dbbf46cb04bb083
+
+### What’s shown in the demo
+- Create incident via UI
+- Async processing using queue (Azurite locally)
+- AI-generated analysis (OpenAI)
+- Retrieval-Augmented Generation (RAG) using Cosmos DB vector search
+- Status flow: pending → analyzed
+
+---
+
 ## What does OpsCopilot do?
 
 1. A user creates an ops issue (title + description)
@@ -84,6 +98,17 @@ You’ll typically run three things in parallel:
 3. Python analyzer function
 
 Each app README explains its own setup and environment variables.
+
+## Local Setup Notes
+
+- Start Azurite in a separate terminal before running the apps:
+  ```bash
+  azurite
+
+- API Function runs on port 7071 by default
+- Analyzer Function (Python) must be started on a different port:
+    - func start --port 7072
+- Queue (ops-items) is created automatically by the API when sending messages
 
 ---
 

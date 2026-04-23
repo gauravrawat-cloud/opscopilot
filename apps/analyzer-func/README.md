@@ -65,7 +65,7 @@ Only items from the same system are considered for retrieval.
 ## Local development
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-func start
+func start -p 7072

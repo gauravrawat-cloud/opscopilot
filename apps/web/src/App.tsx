@@ -40,7 +40,7 @@ export default function App() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [system, setSystem] = useState("eddp");
+  const [system, setSystem] = useState("app");
   const [env, setEnv] = useState("dev");
 
   const canSubmit = useMemo(() => title.trim() && description.trim(), [title, description]);
